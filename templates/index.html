@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}My Dark Sky{% endblock %}
+
+{% block body %}
+<main class="sky-shell">
+  <section class="hero-panel">
+    <div class="container py-5 py-lg-6">
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-6">
+          <p class="eyebrow mb-3">Weather, reimagined</p>
+          <h1 class="display-4 fw-semibold text-white mb-3">A modern take on minute-by-minute weather exploration.</h1>
+          <p class="lead text-white-50 mb-4">
+            Search any city, use your current coordinates, move forward through the forecast, or step back into historical weather.
+            Weather responses are cached for five minutes to keep repeat lookups fast and efficient.
+          </p>
+          <div class="hero-badges">
+            <span>Flask</span>
+            <span>Bootstrap</span>
+            <span>Open-Meteo</span>
+            <span>5-minute cache</span>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="glass-card form-card">
+            <form id="weather-form" method="get" action="{{ url_for('index') }}">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label text-white-50" for="location-query">Search a location</label>
+                  <input
+                    class="form-control form-control-lg search-input"
+                    id="location-query"
+                    name="q"
+                    type="text"
+                    value="{{ query }}"
+                    placeholder="Try Riga, Tokyo, New York, Reykjavik..."
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-white-50" for="date-input">Forecast or historical date</label>
+                  <input class="form-control" id="date-input" name="date" type="date" value="{{ selected_date }}" />
+                </div>
+                <div class="col-md-6 d-flex align-items-end gap-2">
+                  <button type="submit" class="btn btn-sky w-100">Search weather</button>
+                  <button id="use-location" type="button" class="btn btn-outline-light w-100">Use current location</button>
+                </div>
+              </div>
+              {% if latitude is not none and longitude is not none %}
+                <input data-pinned-location type="hidden" name="lat" value="{{ latitude }}" />
+                <input data-pinned-location type="hidden" name="lon" value="{{ longitude }}" />
+                <input data-pinned-location type="hidden" name="name" value="{{ location_name }}" />
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container weather-layout py-4 pb-5">
+    {% if error_message %}
+      <div class="alert alert-danger shadow-sm">{{ error_message }}</div>
+    {% endif %}
+
+    {% if search_results %}
+      <div class="glass-card result-card mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <h2 class="h4 mb-0">Choose a location</h2>
+          <span class="text-secondary">{{ search_results|length }} result{{ '' if search_results|length == 1 else 's' }}</span>
+        </div>
+        <div class="list-group list-group-flush">
+          {% for result in search_results %}
+            <a
+              class="list-group-item list-group-item-action result-row"
+              href="{{ url_for('index', lat=result.latitude, lon=result.longitude, name=result.display_name, date=selected_date) }}"
+            >
+              <span>{{ result.display_name }}</span>
+              <span class="small text-secondary">{{ result.latitude }}, {{ result.longitude }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if weather %}
+      <div class="row g-4">
+        <div class="col-xl-8">
+          <article class="glass-card current-card mb-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+              <div>
+                <p class="text-uppercase small text-secondary mb-2">Selected location</p>
+                <h2 class="display-6 mb-1">{{ location_name }}</h2>
+                <p class="text-secondary mb-0">{{ weather.target_date }} · {{ weather.timezone }}</p>
+              </div>
+              <div class="date-nav">
+                <a class="btn btn-outline-dark" href="{{ url_for('index', lat=latitude, lon=longitude, name=location_name, date=previous_date) }}">← Previous day</a>
+                <a class="btn btn-dark" href="{{ url_for('index', lat=latitude, lon=longitude, name=location_name, date=today) }}">Today</a>
+                {% if can_view_future %}
+                  <a class="btn btn-outline-dark" href="{{ url_for('index', lat=latitude, lon=longitude, name=location_name, date=next_date) }}">Next day →</a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="hero-weather mt-4">
+              <div class="weather-glyph">{{ weather.current.weather_code|weather_icon }}</div>
+              <div>
+                <p class="h2 mb-1">{{ weather.current.temperature }}°C</p>
+                <p class="fs-5 text-secondary mb-1">{{ weather.current.weather_code|weather_label }}</p>
+                <p class="mb-0 text-secondary">Feels like {{ weather.current.apparent_temperature }}°C · Wind {{ weather.current.wind_speed }} km/h</p>
+              </div>
+            </div>
+
+            <div class="metrics-grid mt-4">
+              <div class="metric-box">
+                <span>Humidity</span>
+                <strong>{{ weather.current.humidity }}%</strong>
+              </div>
+              <div class="metric-box">
+                <span>Rain / Snow</span>
+                <strong>{{ weather.current.precipitation }} mm</strong>
+              </div>
+              <div class="metric-box">
+                <span>High / Low</span>
+                <strong>{{ weather.summary.temperature_max }}° / {{ weather.summary.temperature_min }}°</strong>
+              </div>
+              <div class="metric-box">
+                <span>Sunrise / Sunset</span>
+                <strong>{{ weather.summary.sunrise }} / {{ weather.summary.sunset }}</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="h4 mb-0">Hourly timeline</h3>
+              <span class="text-secondary">24-hour weather profile</span>
+            </div>
+            <div class="hourly-grid">
+              {% for hour in weather.hourly %}
+                <div class="hour-card">
+                  <div class="small text-secondary">{{ hour.time }}</div>
+                  <div class="hour-icon">{{ hour.weather_code|weather_icon }}</div>
+                  <div class="fw-semibold">{{ hour.temperature }}°C</div>
+                  <div class="small text-secondary">{{ hour.weather_code|weather_label }}</div>
+                  <div class="small text-secondary">Rain {{ hour.precipitation }} mm</div>
+                  <div class="small text-secondary">Wind {{ hour.wind_speed }} km/h</div>
+                </div>
+              {% endfor %}
+            </div>
+          </article>
+        </div>
+
+        <div class="col-xl-4">
+          <aside class="glass-card side-panel mb-4">
+            <h3 class="h4 mb-3">Day summary</h3>
+            <div class="summary-list">
+              <div><span>Conditions</span><strong>{{ weather.summary.weather_code|weather_label }}</strong></div>
+              <div><span>Max temperature</span><strong>{{ weather.summary.temperature_max }}°C</strong></div>
+              <div><span>Min temperature</span><strong>{{ weather.summary.temperature_min }}°C</strong></div>
+              <div><span>Feels-like max</span><strong>{{ weather.summary.apparent_temperature_max }}°C</strong></div>
+              <div><span>Feels-like min</span><strong>{{ weather.summary.apparent_temperature_min }}°C</strong></div>
+              <div><span>Precipitation total</span><strong>{{ weather.summary.precipitation_sum }} mm</strong></div>
+              <div><span>Rain chance max</span><strong>{{ weather.summary.precipitation_probability_max }}%</strong></div>
+              <div><span>Wind max</span><strong>{{ weather.summary.wind_speed_max }} km/h</strong></div>
+            </div>
+          </aside>
+
+          <aside class="glass-card side-panel">
+            <h3 class="h4 mb-3">How it works</h3>
+            <ul class="feature-list">
+              <li>Search locations using Open-Meteo geocoding.</li>
+              <li>Use browser geolocation to fetch weather for your current position.</li>
+              <li>Navigate to future forecast dates or go back in time.</li>
+              <li>Serve repeated requests from a local JSON cache for 5 minutes.</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    {% else %}
+      <div class="glass-card empty-state">
+        <p class="eyebrow mb-2">Ready for weather</p>
+        <h2 class="h1 mb-3">Search a city or use your location to begin.</h2>
+        <p class="mb-0 text-secondary">
+          The app supports today's weather, a selected forecast date, and historical weather for past dates through one consistent interface.
+        </p>
+      </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

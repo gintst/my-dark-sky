@@ -1,0 +1,251 @@
+:root {
+  --night: #09111f;
+  --night-soft: #12203a;
+  --cloud: rgba(255, 255, 255, 0.72);
+  --glass: rgba(255, 255, 255, 0.76);
+  --line: rgba(255, 255, 255, 0.24);
+  --blue: #67b9ff;
+  --blue-dark: #1e72d5;
+  --sun: #ffd55d;
+  --text: #0f1728;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(103, 185, 255, 0.34), transparent 30%),
+    radial-gradient(circle at top right, rgba(255, 213, 93, 0.18), transparent 22%),
+    linear-gradient(180deg, #081425 0%, #183154 44%, #4e7aa8 100%);
+  font-family: "Segoe UI", Inter, system-ui, sans-serif;
+}
+
+.sky-shell {
+  min-height: 100vh;
+}
+
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 18%),
+    radial-gradient(circle at 82% 16%, rgba(255, 255, 255, 0.16), transparent 22%);
+  pointer-events: none;
+}
+
+.py-lg-6 {
+  padding-top: 6rem !important;
+  padding-bottom: 6rem !important;
+}
+
+.eyebrow {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--sun);
+  font-weight: 700;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hero-badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.glass-card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 25px 60px rgba(3, 11, 24, 0.22);
+}
+
+.form-card,
+.current-card,
+.side-panel,
+.empty-state,
+.result-card {
+  padding: 1.4rem;
+}
+
+.search-input,
+.form-control {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.search-input:focus,
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(103, 185, 255, 0.2);
+}
+
+.btn-sky {
+  border: 0;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+}
+
+.btn-sky:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #7ec7ff, #2f87ef);
+}
+
+.weather-layout {
+  margin-top: -2rem;
+}
+
+.result-row {
+  border-radius: 16px !important;
+  border: 1px solid rgba(15, 23, 40, 0.08) !important;
+  margin-bottom: 0.6rem;
+}
+
+.date-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.hero-weather {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.weather-glyph {
+  width: 108px;
+  height: 108px;
+  display: grid;
+  place-items: center;
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(103, 185, 255, 0.25), rgba(255, 213, 93, 0.2));
+  font-size: 3.5rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.metric-box,
+.hour-card {
+  border-radius: 22px;
+  border: 1px solid rgba(15, 23, 40, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.metric-box {
+  padding: 1rem;
+}
+
+.metric-box span {
+  display: block;
+  color: #5f6a7e;
+  margin-bottom: 0.25rem;
+}
+
+.metric-box strong {
+  font-size: 1.1rem;
+}
+
+.hourly-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.85rem;
+}
+
+.hour-card {
+  padding: 0.95rem;
+}
+
+.hour-icon {
+  font-size: 2rem;
+  margin: 0.35rem 0;
+}
+
+.summary-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.summary-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed rgba(15, 23, 40, 0.15);
+}
+
+.summary-list span,
+.feature-list {
+  color: #5f6a7e;
+}
+
+.feature-list {
+  padding-left: 1.15rem;
+  margin-bottom: 0;
+}
+
+.feature-list li + li {
+  margin-top: 0.65rem;
+}
+
+.empty-state {
+  padding: 2rem;
+  max-width: 880px;
+}
+
+@media (max-width: 992px) {
+  .weather-layout {
+    margin-top: -1rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-weather {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-nav {
+    width: 100%;
+  }
+
+  .date-nav .btn {
+    width: 100%;
+  }
+}
