@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -185,4 +186,4 @@ def index() -> str:
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "5000")), debug=False)
