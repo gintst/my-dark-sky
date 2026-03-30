@@ -2,7 +2,7 @@
 ***
 
 ## Task
-Build a modern weather application in Python with Flask that recreates the spirit of Dark Sky. The app must support:
+This is a qwasar task to build a modern weather application in Python with Flask that recreates the spirit of Dark Sky. The app must support:
 
 - current weather for a location
 - weather by search
