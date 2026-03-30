@@ -29,6 +29,22 @@ body {
   min-height: 100vh;
 }
 
+.project-ribbon {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 0.7rem 1rem;
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #eef6ff;
+  background: rgba(4, 11, 24, 0.72);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 .hero-panel {
   position: relative;
   overflow: hidden;
