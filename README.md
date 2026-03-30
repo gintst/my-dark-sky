@@ -59,6 +59,7 @@ http://127.0.0.1:5000
 The project URL file required by the assignment is:
 
 - `my_dark_sky_url.txt`
+- Live deployed app: `https://my-dark-sky-mgjr.onrender.com/`
 
 Current project structure:
 
@@ -68,6 +69,9 @@ Current project structure:
 - `templates/`
 - `static/`
 - `my_dark_sky_url.txt`
+- `requirements.txt`
+- `render.yaml`
+- `instance/weather_cache.json`
 
 ## API Notes
 The implementation uses Open-Meteo because it supports both forecast and historical weather without requiring an API key.
@@ -82,7 +86,11 @@ Relevant official documentation used:
 Weather responses are cached locally for 5 minutes. The cache key is based on the full request URL and parameters, so identical requests within the TTL reuse stored JSON instead of making another upstream call.
 
 ## Deployment
-Replace the placeholder in `my_dark_sky_url.txt` with the deployed public application URL after hosting the app on a cloud platform.
+The deployed public application URL is stored in `my_dark_sky_url.txt` and currently points to:
+
+- `https://my-dark-sky-mgjr.onrender.com/`
+
+This app is also configured for Render deployment through `render.yaml` and starts with `gunicorn app:app`.
 
 ### The Core Team
 
